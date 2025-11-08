@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatrice Dimensioni Pneumatici</title>
+    <style>
+        /* Stile generale del corpo della pagina */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Contenitore principale della calcolatrice */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Titolo principale */
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+
+        /* Sezione che contiene i due gruppi di input */
+        .tire-input-section {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            gap: 2rem;
+            flex-wrap: wrap; /* Permette di andare a capo su schermi piccoli */
+        }
+
+        /* Stile per ciascun gruppo di input (pneumatico di serie e nuovo) */
+        .tire-input-group {
+            border: 1px solid #ddd;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: #fafafa;
+            flex: 1; /* Occupa lo spazio disponibile */
+            min-width: 280px; /* Larghezza minima per la responsività */
+        }
+
+        .tire-input-group h2 {
+            margin-top: 0;
+            text-align: center;
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Stile per ogni riga di input (etichetta + campo) */
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .input-row label {
+            flex-basis: 120px; /* Base di larghezza per l'etichetta */
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        .input-row input {
+            flex: 1; /* Occupa lo spazio rimanente */
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        /* Stile per la tabella e le altre sezioni dei risultati */
+        .results-section h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        td:last-child {
+            font-weight: bold;
+        }
+
+        /* Stili per le nuove sezioni */
+        #ride-height-section {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        #ride-height-section p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        #visual-comparison-section {
+            margin-top: 2rem;
+        }
+        
+        #visual-comparison-canvas {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Calcolatrice Dimensioni Pneumatici</h1>
+
+        <div class="tire-input-section">
+            <!-- Gruppo Input per Pneumatico di Serie -->
+            <div class="tire-input-group">
+                <h2>Pneumatico di Serie</h2>
+                <div class="input-row">
+                    <label for="stockWidth">Larghezza (mm):</label>
+                    <input type="number" id="stockWidth" value="195" oninput="calculate()">
+                </div>
+                <div class="input-row">
+                    <label for="stockAspectRatio">Rapporto (%):</label>
+                    <input type="number" id="stockAspectRatio" value="80" oninput="calculate()">
+                </div>
+                <div class="input-row">
+                    <label for="stockRim">Cerchio (in):</label>
+                    <input type="number" id="stockRim" value="15" oninput="calculate()">
+                </div>
+            </div>
+
+            <!-- Gruppo Input per Nuovo Pneumatico -->
+            <div class="tire-input-group">
+                <h2>Nuovo Pneumatico</h2>
+                <div class="input-row">
+                    <label for="newWidth">Larghezza (mm):</label>
+                    <input type="number" id="newWidth" value="215" oninput="calculate()">
+                </div>
+                <div class="input-row">
+                    <label for="newAspectRatio">Rapporto (%):</label>
+                    <input type="number" id="newAspectRatio" value="80" oninput="calculate()">
+                </div>
+                <div class="input-row">
+                    <label for="newRim">Cerchio (in):</label>
+                    <input type="number" id="newRim" value="15" oninput="calculate()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione Risultati -->
+        <div class="results-section">
+            <h2>Tabella di Confronto</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Specifica</th>
+                        <th>Pneumatico di Serie</th>
+                        <th>Nuovo Pneumatico</th>
+                        <th>Differenza</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+        </div>
+
+        <!-- NUOVA SEZIONE: Variazione altezza da terra -->
+        <div id="ride-height-section">
+            <p id="rideHeightInfo">L'altezza da terra del veicolo varierà.</p>
+        </div>
+
+        <!-- NUOVA SEZIONE: Confronto visivo -->
+        <div id="visual-comparison-section">
+            <h2 style="text-align: center;">Confronto Visivo</h2>
+            <canvas id="visual-comparison-canvas" width="800" height="400"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const INCH_TO_MM = 25.4;
+
+        /**
+         * Calcola le specifiche di un pneumatico e restituisce i dati in unità SI.
+         */
+        function getTireDataSI(width, aspectRatio, rim) {
+            if (width > 0 && aspectRatio > 0 && rim > 0) {
+                const sidewallHeightMm = width * (aspectRatio / 100);
+                const rimDiameterMm = rim * INCH_TO_MM;
+                const diameterMm = (sidewallHeightMm * 2) + rimDiameterMm;
+                const circumferenceMm = diameterMm * Math.PI;
+                const revsPerKm = 1000000 / circumferenceMm;
+
+                return {
+                    diameter: diameterMm,
+                    width: width,
+                    sidewall: sidewallHeightMm,
+                    circumference: circumferenceMm / 1000,
+                    revsPerKm: revsPerKm,
+                    rimDiameter: rimDiameterMm // Aggiunto per il disegno
+                };
+            }
+            return { diameter: 0, width: 0, sidewall: 0, circumference: 0, revsPerKm: 0, rimDiameter: 0 };
+        }
+        
+        /**
+         * Disegna i due pneumatici sul canvas per un confronto visivo.
+         */
+        function drawTires(stockTire, newTire) {
+            const canvas = document.getElementById('visual-comparison-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Adatta la risoluzione del canvas per schermi ad alta densità (es. Retina)
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const canvasWidth = canvas.clientWidth;
+            const canvasHeight = canvas.clientHeight;
+
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            if (stockTire.diameter === 0 || newTire.diameter === 0) return;
+
+            const maxDiameter = Math.max(stockTire.diameter, newTire.diameter);
+            const padding = 40;
+            const scale = (canvasHeight - 2 * padding) / maxDiameter;
+
+            const centerX1 = canvasWidth / 4;
+            const centerX2 = (canvasWidth / 4) * 3;
+            const centerY = canvasHeight / 2;
+
+            // Funzione helper per disegnare un singolo pneumatico
+            const drawSingleTire = (centerX, tireData) => {
+                const tireRadius = (tireData.diameter / 2) * scale;
+                const rimRadius = (tireData.rimDiameter / 2) * scale;
+                
+                // Disegna la gomma
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, tireRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#333';
+                ctx.fill();
+
+                // Disegna il cerchio
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, rimRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#d3d3d3';
+                ctx.fill();
+                ctx.strokeStyle = '#a9a9a9';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Scrive il testo con le dimensioni
+                ctx.fillStyle = '#000';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Diametro: ${tireData.diameter.toFixed(1)} mm`, centerX, canvasHeight - 15);
+            };
+
+            drawSingleTire(centerX1, stockTire);
+            drawSingleTire(centerX2, newTire);
+        }
+
+        /**
+         * Funzione principale che aggiorna tutti i risultati.
+         */
+        function calculate() {
+            const stockWidth = parseFloat(document.getElementById('stockWidth').value);
+            const stockAspectRatio = parseFloat(document.getElementById('stockAspectRatio').value);
+            const stockRim = parseFloat(document.getElementById('stockRim').value);
+
+            const newWidth = parseFloat(document.getElementById('newWidth').value);
+            const newAspectRatio = parseFloat(document.getElementById('newAspectRatio').value);
+            const newRim = parseFloat(document.getElementById('newRim').value);
+
+            const stockTire = getTireDataSI(stockWidth, stockAspectRatio, stockRim);
+            const newTire = getTireDataSI(newWidth, newAspectRatio, newRim);
+
+            // 1. Aggiorna la tabella dei risultati
+            const results = [
+                { spec: 'Diametro (mm)', stock: stockTire.diameter, new: newTire.diameter },
+                { spec: 'Larghezza (mm)', stock: stockTire.width, new: newTire.width },
+                { spec: 'Altezza Spalla (mm)', stock: stockTire.sidewall, new: newTire.sidewall },
+                { spec: 'Circonferenza (m)', stock: stockTire.circumference, new: newTire.circumference },
+                { spec: 'Giri per Chilometro', stock: stockTire.revsPerKm, new: newTire.revsPerKm }
+            ];
+
+            const tableBody = document.getElementById('resultsTable');
+            tableBody.innerHTML = '';
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                let diffText = 'N/A';
+                if (result.stock > 0 && result.new > 0) {
+                    const difference = ((result.new - result.stock) / result.stock) * 100;
+                    diffText = `${difference.toFixed(2)}%`;
+                }
+                
+                const formatValue = (value, spec) => {
+                    if (value <= 0) return 'N/A';
+                    return spec === 'Circonferenza (m)' ? value.toFixed(3) : value.toFixed(1);
+                };
+
+                row.innerHTML = `
+                    <td>${result.spec}</td>
+                    <td>${formatValue(result.stock, result.spec)}</td>
+                    <td>${formatValue(result.new, result.spec)}</td>
+                    <td>${diffText}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // 2. Aggiorna la variazione dell'altezza da terra
+            const rideHeightInfo = document.getElementById('rideHeightInfo');
+            if (stockTire.diameter > 0 && newTire.diameter > 0) {
+                const heightChange = (newTire.diameter - stockTire.diameter) / 2;
+                if (Math.abs(heightChange) < 0.1) {
+                    rideHeightInfo.innerHTML = `L'altezza da terra del veicolo <b style="color: #333;">non cambia</b>.`;
+                } else if (heightChange > 0) {
+                    rideHeightInfo.innerHTML = `Il veicolo si alzerà di <b style="color: green;">${heightChange.toFixed(1)} mm</b>.`;
+                } else {
+                    rideHeightInfo.innerHTML = `Il veicolo si abbasserà di <b style="color: red;">${Math.abs(heightChange).toFixed(1)} mm</b>.`;
+                }
+            } else {
+                rideHeightInfo.textContent = 'Inserire dati validi per calcolare la variazione di altezza.';
+            }
+            
+            // 3. Aggiorna il disegno del confronto visivo
+            drawTires(stockTire, newTire);
+        }
+
+        // Esegue il calcolo al caricamento e ad ogni ridimensionamento della finestra (per il canvas)
+        window.onload = calculate;
+        window.onresize = calculate;
+    </script>
+
+</body>
+</html>
