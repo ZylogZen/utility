@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Pizza</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calcola gli ingredienti della tua pizza</h1>
+            <p class="subtitle">Calcolatore per le corrette quantità da utilizzare nel preparare l'impasto per pizza</p>
+        </header>
+
+        <div class="calculator-box">
+            <div class="input-section">
+                <h2>Dati di Input</h2>
+                
+                <div class="form-group">
+                    <label for="panetti">Numero panetti:</label>
+                    <input type="number" id="panetti" value="6" min="1" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="peso">Peso panetto (grammi):</label>
+                    <input type="number" id="peso" value="250" min="50" step="10">
+                </div>
+
+                <div class="form-group">
+                    <label for="idratazione">Idratazione (%):</label>
+                    <input type="number" id="idratazione" value="65" min="50" max="90" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="sale">Sale (%):</label>
+                    <input type="number" id="sale" value="2.5" min="0" max="5" step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label for="temperatura">Temperatura ambiente (°C):</label>
+                    <input type="number" id="temperatura" value="20" min="5" max="35" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="oreLievitazione">Ore lievitazione:</label>
+                    <input type="number" id="oreLievitazione" value="24" min="1" max="72" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="tipoLievito">Tipo lievito:</label>
+                    <select id="tipoLievito">
+                        <option value="fresco">Lievito di birra fresco</option>
+                        <option value="secco">Lievito di birra secco</option>
+                        <option value="madre">Pasta madre/Lievito madre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipoPasta">Tipo pasta:</label>
+                    <select id="tipoPasta">
+                        <option value="normale">Normale</option>
+                        <option value="vivace">Vivace</option>
+                        <option value="stanca">Stanca</option>
+                        <option value="riporto">Con pasta di riporto</option>
+                    </select>
+                </div>
+
+                <button id="calcola" class="btn-calcola">Calcola Ingredienti</button>
+            </div>
+
+            <div class="results-section">
+                <h2>Risultati</h2>
+                <div id="risultati" class="risultati">
+                    <div class="result-item">
+                        <span class="label">Farina:</span>
+                        <span class="value" id="farina">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Acqua:</span>
+                        <span class="value" id="acqua">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Sale:</span>
+                        <span class="value" id="saleRis">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Lievito:</span>
+                        <span class="value" id="lievito">-</span>
+                    </div>
+                    <div class="result-item totale">
+                        <span class="label">Peso totale impasto:</span>
+                        <span class="value" id="totale">-</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>Informazioni aggiuntive</h3>
+                    <div id="infoAggiuntive"></div>
+                </div>
+
+                <div class="note">
+                    <p><strong>Note:</strong></p>
+                    <ul>
+                        <li>I calcoli sono indicativi e vanno adattati alle proprie esigenze</li>
+                        <li>La temperatura ambiente influisce notevolmente sulla lievitazione</li>
+                        <li>Per temperature più basse aumentare leggermente il lievito</li>
+                        <li>Per temperature più alte ridurre il lievito</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Ringraziamo per il prezioso aiuto i membri del forum de La Confraternita della Pizza</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.calculator-box {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+.input-section, .results-section {
+    padding: 40px;
+}
+
+.input-section {
+    background: #f8f9fa;
+    border-right: 2px solid #e9ecef;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+input[type="number"], select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: all 0.3s;
+}
+
+input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-calcola {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 20px;
+}
+
+.btn-calcola:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-calcola:active {
+    transform: translateY(0);
+}
+
+.risultati {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.result-item.totale {
+    border-left-color: #764ba2;
+    font-weight: 600;
+    font-size: 1.1em;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+}
+
+.result-item .label {
+    color: #555;
+}
+
+.result-item .value {
+    color: #333;
+    font-weight: 600;
+}
+
+.info-box {
+    background: #e3f2fd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2196F3;
+}
+
+.info-box h3 {
+    color: #1976D2;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.info-box p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.note {
+    background: #fff3cd;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid #ffc107;
+}
+
+.note strong {
+    color: #856404;
+    font-size: 1.1em;
+}
+
+.note ul {
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.note li {
+    color: #856404;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+footer {
+    text-align: center;
+    color: white;
+    margin-top: 30px;
+    padding: 20px;
+    opacity: 0.9;
+}
+
+@media (max-width: 968px) {
+    .calculator-box {
+        grid-template-columns: 1fr;
+    }
+    
+    .input-section {
+        border-right: none;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    header h1 {
+        font-size: 2em;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .input-section, .results-section {
+        padding: 20px;
+    }
+    
+    header h1 {
+        font-size: 1.6em;
+    }
+    
+    h2 {
+        font-size: 1.4em;
+    }
+}
+</style>
+
+<script>
+document.getElementById('calcola').addEventListener('click', calcolaIngredienti);
+
+function calcolaIngredienti() {
+    // Ottieni i valori di input
+    const panetti = parseFloat(document.getElementById('panetti').value);
+    const pesoPanetto = parseFloat(document.getElementById('peso').value);
+    const idratazione = parseFloat(document.getElementById('idratazione').value);
+    const percSale = parseFloat(document.getElementById('sale').value);
+    const temperatura = parseFloat(document.getElementById('temperatura').value);
+    const oreLievitazione = parseFloat(document.getElementById('oreLievitazione').value);
+    const tipoLievito = document.getElementById('tipoLievito').value;
+    const tipoPasta = document.getElementById('tipoPasta').value;
+    
+    // Calcola peso totale impasto
+    const pesoTotale = panetti * pesoPanetto;
+    
+    // Calcola farina (base per tutti i calcoli)
+    // Formula: Farina = Peso Totale / (1 + Idratazione/100 + Sale/100)
+    const farina = pesoTotale / (1 + idratazione/100 + percSale/100);
+    
+    // Calcola acqua
+    const acqua = farina * (idratazione / 100);
+    
+    // Calcola sale
+    const sale = farina * (percSale / 100);
+    
+    // Calcola lievito basato su temperatura e tempo
+    let lievito = calcolaLievito(farina, temperatura, oreLievitazione, tipoLievito, tipoPasta);
+    
+    // Mostra risultati
+    document.getElementById('farina').textContent = farina.toFixed(1) + ' g';
+    document.getElementById('acqua').textContent = acqua.toFixed(1) + ' g';
+    document.getElementById('saleRis').textContent = sale.toFixed(1) + ' g';
+    document.getElementById('lievito').textContent = formatLievito(lievito, tipoLievito);
+    document.getElementById('totale').textContent = pesoTotale.toFixed(1) + ' g';
+    
+    // Mostra informazioni aggiuntive
+    mostraInfoAggiuntive(temperatura, oreLievitazione, tipoPasta, idratazione);
+}
+
+function calcolaLievito(farina, temp, ore, tipo, tipoPasta) {
+    // Formula base: più ore = meno lievito, più temperatura = meno lievito
+    // Coefficiente base per lievito fresco
+    let coefficiente = 1.0;
+    
+    // Temperatura ideale è 20°C
+    const diffTemp = temp - 20;
+    
+    // Calcolo base: quantità inversamente proporzionale al tempo
+    let quantitaBase = (farina * 0.001) * (24 / ore);
+    
+    // Correggi per temperatura (più caldo = meno lievito)
+    quantitaBase = quantitaBase * Math.pow(0.95, diffTemp);
+    
+    // Aggiusta per tipo di pasta
+    switch(tipoPasta) {
+        case 'vivace':
+            coefficiente = 1.2;
+            break;
+        case 'stanca':
+            coefficiente = 0.8;
+            break;
+        case 'riporto':
+            coefficiente = 0.7;
+            break;
+        default:
+            coefficiente = 1.0;
+    }
+    
+    quantitaBase *= coefficiente;
+    
+    // Converti in base al tipo di lievito
+    switch(tipo) {
+        case 'secco':
+            return quantitaBase / 3; // Lievito secco è 3 volte più concentrato
+        case 'madre':
+            return quantitaBase * 150; // Lievito madre si usa molto di più
+        default:
+            return quantitaBase;
+    }
+}
+
+function formatLievito(quantita, tipo) {
+    if (quantita < 0.1 && tipo === 'secco') {
+        return '< 0.1 g (pizzico)';
+    } else if (quantita < 0.5 && tipo === 'fresco') {
+        return quantita.toFixed(2) + ' g';
+    } else {
+        return quantita.toFixed(1) + ' g';
+    }
+}
+
+function mostraInfoAggiuntive(temp, ore, tipoPasta, idratazione) {
+    const infoDiv = document.getElementById('infoAggiuntive');
+    let info = '';
+    
+    // Valutazione temperatura
+    if (temp < 15) {
+        info += '<p>🌡️ <strong>Temperatura bassa:</strong> La lievitazione sarà più lenta. Considera di aumentare leggermente il lievito o allungare i tempi.</p>';
+    } else if (temp > 25) {
+        info += '<p>🌡️ <strong>Temperatura alta:</strong> La lievitazione sarà più veloce. Fai attenzione a non far sovralievitare l\'impasto.</p>';
+    } else {
+        info += '<p>🌡️ <strong>Temperatura ideale:</strong> Condizioni ottimali per la lievitazione.</p>';
+    }
+    
+    // Valutazione tempi
+    if (ore < 8) {
+        info += '<p>⏱️ <strong>Lievitazione breve:</strong> Impasto pronto in poco tempo ma con maturazione limitata.</p>';
+    } else if (ore > 48) {
+        info += '<p>⏱️ <strong>Lievitazione lunga:</strong> Ottima maturazione, pizza molto digeribile. Consigliato conservare in frigo.</p>';
+    } else {
+        info += '<p>⏱️ <strong>Lievitazione standard:</strong> Buon equilibrio tra tempi e maturazione dell\'impasto.</p>';
+    }
+    
+    // Info su idratazione
+    if (idratazione < 60) {
+        info += '<p>💧 <strong>Bassa idratazione:</strong> Impasto più gestibile, adatto a principianti.</p>';
+    } else if (idratazione > 70) {
+        info += '<p>💧 <strong>Alta idratazione:</strong> Impasto più morbido e alveolato, richiede buona tecnica di stesura.</p>';
+    }
+    
+    // Info su tipo pasta
+    const tipiPastaInfo = {
+        'normale': 'Pasta standard, equilibrata.',
+        'vivace': 'Pasta più attiva, lieviterà più velocemente.',
+        'stanca': 'Pasta meno attiva, più controllabile.',
+        'riporto': 'Con pasta di riporto, ottima per sapore e digeribilità.'
+    };
+    info += `<p>🍕 <strong>Tipo impasto:</strong> ${tipiPastaInfo[tipoPasta]}</p>`;
+    
+    infoDiv.innerHTML = info;
+}
+
+// Calcola automaticamente al caricamento della pagina
+window.addEventListener('load', calcolaIngredienti);
+
+// Calcola automaticamente quando cambiano i valori
+document.querySelectorAll('input, select').forEach(element => {
+    element.addEventListener('change', calcolaIngredienti);
+});
+</script>
+</body>
+</html>
