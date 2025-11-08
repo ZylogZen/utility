@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore Immagini con Aspect Ratio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input[type="number"],
+        input[type="color"],
+        select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="color"] {
+            height: 45px;
+            cursor: pointer;
+        }
+
+        select {
+            cursor: pointer;
+            background: white;
+        }
+
+        .orientation-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .orientation-btn {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .orientation-btn:hover {
+            background: #f5f5f5;
+            border-color: #667eea;
+        }
+
+        .orientation-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .preview-section {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            overflow: auto;
+        }
+
+        #canvas {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-download:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Generatore Immagini con Aspect Ratio</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="aspectRatio">Aspect Ratio</label>
+                <select id="aspectRatio">
+                    <option value="1:1">1:1 (Perfect Square)</option>
+                    <option value="2:3">2:3 (Classic Portrait)</option>
+                    <option value="3:4">3:4 (Golden Ratio)</option>
+                    <option value="3:5">3:5 (Elegant Vertical)</option>
+                    <option value="4:5">4:5 (Artistic Frame)</option>
+                    <option value="5:7">5:7 (Balanced Portrait)</option>
+                    <option value="5:8">5:8 (Tall Portrait)</option>
+                    <option value="7:9">7:9 (Modern Portrait)</option>
+                    <option value="9:16">9:16 (Slim Vertical)</option>
+                    <option value="9:19">9:19 (Tall Slim)</option>
+                    <option value="9:21">9:21 (Ultra Tall)</option>
+                    <option value="9:32">9:32 (Skyline)</option>
+                    <option value="3:2">3:2 (Golden Landscape)</option>
+                    <option value="4:3">4:3 (Classic Landscape)</option>
+                    <option value="5:3">5:3 (Wide Horizon)</option>
+                    <option value="5:4">5:4 (Balanced Frame)</option>
+                    <option value="7:5">7:5 (Elegant Landscape)</option>
+                    <option value="8:5">8:5 (Cinematic View)</option>
+                    <option value="9:7">9:7 (Artful Horizon)</option>
+                    <option value="16:9">16:9 (Panorama)</option>
+                    <option value="19:9">19:9 (Cinematic Ultrawide)</option>
+                    <option value="21:9">21:9 (Epic Ultrawide)</option>
+                    <option value="32:9">32:9 (Extreme Ultrawide)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Orientamento</label>
+                <div class="orientation-group">
+                    <button class="orientation-btn active" id="landscapeBtn">
+                        🖼️ Landscape
+                    </button>
+                    <button class="orientation-btn" id="portraitBtn">
+                        📱 Portrait
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="width">Larghezza (px)</label>
+                <input type="number" id="width" value="1920" min="1" max="10000">
+            </div>
+
+            <div class="control-group">
+                <label for="height">Altezza (px)</label>
+                <input type="number" id="height" value="1080" min="1" max="10000" readonly style="background: #f5f5f5;">
+            </div>
+
+            <div class="control-group">
+                <label for="color">Colore di sfondo</label>
+                <input type="color" id="color" value="#667eea">
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>Dimensioni attuali:</strong> <span id="dimensions">1920 x 1080 px</span>
+        </div>
+
+        <div class="preview-section">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <button class="btn-download" id="download">⬇️ Scarica Immagine PNG</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const widthInput = document.getElementById('width');
+        const heightInput = document.getElementById('height');
+        const colorInput = document.getElementById('color');
+        const aspectRatioSelect = document.getElementById('aspectRatio');
+        const landscapeBtn = document.getElementById('landscapeBtn');
+        const portraitBtn = document.getElementById('portraitBtn');
+        const dimensionsDisplay = document.getElementById('dimensions');
+        const downloadBtn = document.getElementById('download');
+
+        let isLandscape = true;
+
+        function updateCanvas() {
+            const w = parseInt(widthInput.value) || 1920;
+            const h = parseInt(heightInput.value) || 1080;
+            const color = colorInput.value;
+
+            canvas.width = w;
+            canvas.height = h;
+
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, w, h);
+
+            dimensionsDisplay.textContent = `${w} x ${h} px`;
+        }
+
+        function calculateDimensions() {
+            const ratioStr = aspectRatioSelect.value;
+            let [w, h] = ratioStr.split(':').map(Number);
+            
+            if (!isLandscape) {
+                [w, h] = [h, w];
+            }
+
+            const baseWidth = parseInt(widthInput.value) || 1920;
+            const newHeight = Math.round(baseWidth * h / w);
+            
+            heightInput.value = newHeight;
+            updateCanvas();
+        }
+
+        aspectRatioSelect.addEventListener('change', calculateDimensions);
+
+        widthInput.addEventListener('input', calculateDimensions);
+
+        colorInput.addEventListener('input', updateCanvas);
+
+        landscapeBtn.addEventListener('click', () => {
+            if (!isLandscape) {
+                isLandscape = true;
+                landscapeBtn.classList.add('active');
+                portraitBtn.classList.remove('active');
+                calculateDimensions();
+            }
+        });
+
+        portraitBtn.addEventListener('click', () => {
+            if (isLandscape) {
+                isLandscape = false;
+                portraitBtn.classList.add('active');
+                landscapeBtn.classList.remove('active');
+                calculateDimensions();
+            }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            const w = canvas.width;
+            const h = canvas.height;
+            const orientation = isLandscape ? 'landscape' : 'portrait';
+            link.download = `immagine_${w}x${h}_${orientation}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        calculateDimensions();
+    </script>
+</body>
+</html>
